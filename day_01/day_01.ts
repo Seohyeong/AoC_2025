@@ -6,11 +6,28 @@ const rotations = input.split("\n")
 
 type Direction = "L" | "R";
 
-const wrap = (n: number): number => ((n % 100) + 100) % 100;
+function getNextValue(
+    direction: Direction, 
+    current: number, 
+    amount: number
+): {
+    numPassedZero: number;
+    output: number;
+} {
+    const wrap = (n: number): number => ((n % 100) + 100) % 100;
 
-function getNextValue(direction: Direction, current: number, amount: number): number {
-    const output = direction === "L" ? current - amount : current + amount;
-    return wrap(output);
+    const start = current;
+    const end = direction === "L" ? current - amount : current + amount;
+
+    const distantanceToZero = start === 0 ? 0 : 100 - start;
+    const numPassedZero = direction === "L" 
+        ? Math.floor((amount + distantanceToZero) / 100)
+        : Math.floor((start + amount) / 100);
+
+    return { 
+        numPassedZero, 
+        output: wrap(end),
+    };
 }
 
 let current = 50;
@@ -20,10 +37,11 @@ for (const rotation of rotations) {
     const direction = rotation[0] as Direction;
     const amount = Number(rotation.slice(1));
 
-    const next = getNextValue(direction, current, amount)
-    current = next;
-    if (next === 0) {
-        answer ++;
-    }
+    const { numPassedZero, output } = getNextValue(direction, current, amount)
+
+    console.log(`current: ${current} => ${rotation} => ${output}`)
+    console.log(`num passed zero: ${numPassedZero}\n\n`);
+    answer += numPassedZero;
+    current = output;
 }
 console.log(answer);
