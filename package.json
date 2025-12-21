@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "start": "tsx day_01/day_01.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.48.1",
+    "@typescript-eslint/parser": "^8.48.1",
+    "eslint": "^9.39.1",
+    "tsx": "^4.21.0"
+  },
+  "dependencies": {
+    "denque": "^2.1.0"
+  }
+}
