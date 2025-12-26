@@ -10,6 +10,7 @@
     "tsx": "^4.21.0"
   },
   "dependencies": {
-    "denque": "^2.1.0"
+    "denque": "^2.1.0",
+    "yalps": "^0.6.4"
   }
 }
