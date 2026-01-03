@@ -1,55 +1,42 @@
-import Denque from "denque";
 import { readFileSync } from "fs";
 
-const filePath = "day_11/input.txt";
-const file = readFileSync(filePath, "utf-8");
-const lines = file.split("\n").map((str) => str.split(": "));
 
 const graph = new Map<string, string[]>();
+
+// Read and parse input
+const file = readFileSync("day_11/input.txt", "utf-8");
+const lines = file.split("\n").map((str) => str.split(": "));
 for (const line of lines) {
     graph.set(line[0], line[1].split(" "));
 }
 
-console.log(graph);
+// Memoized recursive function
+const memo = new Map<string, number>();
 
-const ways = new Map<string, number>();
-ways.set("you", 1);
-let queue = new Denque<string>();
-queue.push("you");
-
-while (queue.length > 0) {
-    const nextQueue = new Denque<string>();
-    const set = new Set<string>();
-
-    while (queue.length > 0) {
-            const currNode = queue.shift();
-        if (!currNode) break;
-
-        const neighbors = graph.get(currNode);
-        if (!neighbors) break;
-
-        console.log(`current node: ${currNode}, neighboring: ${neighbors}`);
-        const delta = ways.get(currNode);
-        if (!delta) break;
-
-        for (const neighbor of neighbors) {
-            if (!ways.has(neighbor)) {
-                ways.set(neighbor, delta);
-                console.log(`> setting neighboring ${neighbor} to ${delta}`);
-            } else {
-                const currWays = ways.get(neighbor)!;
-                ways.set(neighbor, currWays + delta);
-                console.log(`> setting neighboring ${neighbor} to ${currWays + delta}`);
-            }
-
-            if (!set.has(neighbor)) {
-                set.add(neighbor);
-                nextQueue.push(neighbor);
-            }
-        }
+function count(src: string, dst: string): number {
+    const key = `${src},${dst}`;
+    
+    // Check memoization cache
+    if (memo.has(key)) {
+        return memo.get(key)!;
     }
-
-    queue = nextQueue;
+    
+    // Base case: if source equals destination
+    if (src === dst) {
+        memo.set(key, 1);
+        return 1;
+    }
+    
+    // Recursive case: sum paths from all neighbors
+    const neighbors = graph.get(src) || [];
+    let result = 0;
+    for (const neighbor of neighbors) {
+        result += count(neighbor, dst);
+    }
+    
+    // Store in cache and return
+    memo.set(key, result);
+    return result;
 }
 
-console.log(ways);
+console.log(count("you", "out"));
